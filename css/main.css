@@ -1,0 +1,95 @@
+.NavPanel {
+  width:70%;
+  margin:auto;
+}
+.field {
+    clear:both; 
+    text-align:right;
+}
+.field label {float:left;}
+
+.header {
+  z-index: 100;
+}
+
+.zi1 {
+    z-index: 1;
+}
+
+.hidden {
+    display:none;
+}
+dd > input[type="text"],
+dd > input[type="password"],
+dd > input[type="url"],
+dd > input[type="email"],
+dd > input.text,
+dd > input.title,
+dd > textarea,
+dd > select {
+    margin: 0.2em 0;
+    width:250px;
+    height: 30px;
+    font-size: 1.2em
+
+
+
+}
+
+form dl {
+}
+form dt {
+    float: left;
+    clear: both;
+    width: 120px;
+    text-align: left;
+    margin-right: 10px;
+    vertical-align: top;
+    position: relative;
+    top: 10px;
+}
+
+form dd {
+    margin-left: 0em;
+}
+
+.preview {
+    height: 150px;
+    width: 150px;
+}
+
+.notevisadenysimple {
+ background-color: red;
+}
+
+.notevisapermitsimple{
+    background-color: green;
+}
+
+.noteDelete {
+    background-color: #808080;
+}
+.doc {
+    background-color: #f5deb3;
+}
+.dinfo h1 {
+    background-color: #ffd700;
+    font-size: 20px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none
+}
+
+object.hiddenObject
+{
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 0px;
+    max-width: 0px;
+    max-height: 0px;
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	
+	<head>
+		<title>jQuery Notification</title>
+		
+		<style type="text/css">
+			BODY {
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 12px;
+				line-height: 1.5;
+				padding: 10px 30px;
+			}
+		</style>
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+		
+		<script type="text/javascript" src="jquery.notification.js"></script>
+		<link type="text/css" rel="stylesheet" href="jquery.notification.css" />
+		
+		<script type="text/javascript">
+			
+			$(document).ready( function() {
+				
+				$('.notify').click( function() {
+					$.notification($('INPUT[name=message]').val(), {
+						duration: parseInt($('INPUT[name=duration]').val()),
+						freezeOnHover: $('INPUT[name=freezeOnHover]').prop('checked'),
+						hideSpeed: parseInt($('INPUT[name=hideSpeed]').val()),
+						position: $(this).attr('id'),
+						showSpeed: parseInt($('INPUT[name=showSpeed]').val())
+					});
+				});
+				
+			});
+			
+		</script>
+		
+	</head>
+	
+	<body>
+	
+		<h1>jQuery Notification Demo</h1>
+		
+		<p>
+			Select a button to trigger a notification at the respective screen location:
+		</p>
+		
+		<table>
+			<tbody>
+				<tr>
+					<td><input type="button" id="top-left" class="notify" /></td>
+					<td><input type="button" id="top" class="notify" /></td>
+					<td><input type="button" id="top-right" class="notify" /></td>
+				</tr>
+				<tr>
+					<td><input type="button" id="left" class="notify" /></td>
+					<td><input type="button" id="center" class="notify" /></td>
+					<td><input type="button" id="right" class="notify" /></td>
+				</tr>
+				<tr>
+					<td><input type="button" id="bottom-left" class="notify" /></td>
+					<td><input type="button" id="bottom" class="notify" /></td>
+					<td><input type="button" id="bottom-right" class="notify" /></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<h3>Settings</h3>
+		<p><input type="text" size="30" name="message" value="This is a notification!" /></p>
+		<p><input type="text" size="4" name="duration" value="2000" /> Duration</p>
+		<p><input type="text" size="4" name="showSpeed" value="250" /> Show Speed</p>
+		<p><input type="text" size="4" name="hideSpeed" value="250" /> Hide Speed</p>
+		<p><label><input type="checkbox" name="freezeOnHover"> Freeze on hover</label></p>
+		<p><input type="reset" value="Reset" /></p>
+		
+	</body>
+	
+</html>

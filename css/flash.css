@@ -1,0 +1,31 @@
+/* 
+    Document   : flash
+    Created on : 06.09.2011, 8:22:08
+    Author     : dmaslov
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+.saveok {
+    color:yellow;
+    width:120px;
+    height: 90px;
+    z-index: 100;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -100px;
+    background-color: green;
+    
+    
+}
+

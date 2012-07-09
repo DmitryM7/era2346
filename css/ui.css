@@ -1,0 +1,75 @@
+.HeaderPanelLeft {
+    float:left;
+    font-size: 45px
+}
+.HeaderPanelRight {
+    float:right;
+}
+.OrgSInfo {
+    font-size: 15px
+}
+
+.PhotoPanel {
+
+}
+.category {
+    background-color: #FFFFCC;
+    width: 295px;
+    height: 295px;
+    display: inline-block
+}
+.twitter {
+    background-color: red;
+    height: 500px
+}
+
+input[type="text"], 
+input[type="password"], 
+input[type="url"], 
+input[type="email"], 
+input.text, 
+input.title, 
+textarea, select {
+    margin: 0.2em 0;
+    width:250px;
+    height: 30px;
+    font-size: 1.2em
+        
+        
+       
+}
+
+form dl {
+}
+form dt {
+float: left;
+clear: both;
+width: 120px;
+text-align: left;
+margin-right: 10px;
+vertical-align: top;
+position: relative;
+top: 10px;
+}
+
+form dd {
+   margin-left: 0em;
+}
+
+.preview {
+    height: 150px;
+    width: 150px;
+}
+
+object.hiddenObject
+{
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 0px;
+    max-width: 0px;
+    max-height: 0px;
+}

@@ -1,0 +1,17 @@
+Usage
+	
+	With default settings:
+	
+		$.notification('This is a notification!');
+	
+	With custom settings:
+		
+		$.notification('This is a notification!', {
+			className: 'jquery-notification',
+			duration: 2000,
+			freezeOnHover: false,
+			hideSpeed: 250,
+			position: 'center',
+			showSpeed: 250,
+			zIndex: 99999
+		});

@@ -1,0 +1,13 @@
+.chess-table {
+    width:100%;
+}
+.chess-row {
+
+}
+.chess-cell {
+    border: 4px double black;
+    height: 150px;
+    width: 150px;
+    text-align: center;
+    vertical-align: bottom;
+}

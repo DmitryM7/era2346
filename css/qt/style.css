@@ -1,0 +1,27 @@
+	
+	#main {width: 640px; height: 500px; margin-top: 7px; position: relative; float: left; background: transparent url(images/clouds.gif) no-repeat;}
+	
+	.tTip {width: 200px; position: absolute; cursor: pointer; color: #666; font-weight: bold;}
+	.tip {color: #333;}
+	
+		#cloud1 {top: 93px; left: 230px;}
+		#cloud2 {top: 168px; left: 440px;}
+		#cloud3 {top: 228px; left: 100px;}
+		#cloud4 {top: 350px; left: 370px;}
+		#cloud5 {top: 370px; left: 60px;}
+				
+/*-----------------------------------------------------------------------------------------------*/
+/*                                         TOOLTIP STYLES                                        */
+/*-----------------------------------------------------------------------------------------------*/
+
+.tip {
+	width: 212px;
+	padding-top: 37px;
+	overflow: hidden;
+	display: none;
+	position: absolute;
+	z-index: 500;
+	background: transparent url(images/tipTop.png) no-repeat top;}
+	
+.tipMid {background: transparent url(images/tipMid.png) repeat-y; padding: 0 25px 20px 25px;}
+.tipBtm {background: transparent url(images/tipBtm.png) no-repeat bottom; height: 32px;}
