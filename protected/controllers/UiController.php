@@ -533,7 +533,7 @@ echo $soap->addConfDoc(CJSON::encode($conf));
                 array('allow',
                        'actions'=>array(
                            'ajaxDelDoc',
-                        'users'=>array('dmaslov@pirbank.ru')
+                        'users'=>array('dmaslov@domain.ru')
                        )),
                 array('deny',
                        'users'=>array('*')

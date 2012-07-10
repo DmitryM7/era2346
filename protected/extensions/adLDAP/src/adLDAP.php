@@ -84,7 +84,7 @@ class adLDAP {
     * 
     * @var string
     */   
-	protected $accountSuffix = "@pirbank.ru";
+	protected $accountSuffix = "@domain.ru";
     
     /**
     * The base dn for your domain
@@ -93,7 +93,7 @@ class adLDAP {
     * 
     * @var string
     */
-	protected $baseDn = "DC=pirbank,DC=ru"; 
+	protected $baseDn = "DC=domain,DC=ru";
     
     /** 
     * Port used to talk to the domain controllers. 
@@ -108,7 +108,7 @@ class adLDAP {
     * 
     * @var array
     */
-    protected $domainControllers = array("dc01.pirbank.ru");
+    protected $domainControllers = array("dc01.domain.ru");
 	
     /**
     * Optional account with higher privileges for searching

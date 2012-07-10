@@ -109,7 +109,7 @@ $().ready(function () {
     $('#whoPresent').onlineInformer({
         delay :'10000',
         url   :'http://localwww2/ui/markUser',
-        whoAmI:'dmaslov@pirbank.ru'
+        whoAmI:'dmaslov@domain.ru'
     });
 
     $('#wall').wall({
