@@ -100,8 +100,13 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
-                // Контролер отправки форм
-                'finspector'=>'ADMNRE'
+		'adminEmail'=>'admin@era2346.ru',
+        // Контролер отправки форм
+        'finspector'=>'ADMNRE',
+        //Тип идентификации
+        // Возможные варианты {ad,simple}
+        'auth'=>array(
+            'type'=>'simple'
+        )
 	),    
 );

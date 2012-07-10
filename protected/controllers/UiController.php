@@ -54,11 +54,16 @@ class UiController extends Controller
            return $this->_jqGrid;
         }
 
-        public function actionLogin() {
+    /**
+     * Identification action.
+     * These action provide a few ways:
+     *  1. Identification from AD;
+     *  2. Identification from user input.
+     */
+    public function actionLogin() {
 
             $krbauth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
            
-            
             if ($krbauth->authenticate()) {
                 Yii::app()->user->login($krbauth);                                                
                 $this->redirect('index');
@@ -148,7 +153,7 @@ echo $soap->addConfDoc(CJSON::encode($conf));
            Yii::app()->user->setFlash('succes',"$icount files were upload");
            $this->redirect('index');
         }
-        public function actionaddDoc() {
+       public function actionaddDoc() {
             $soap = new SoapClient('http://localwww2/wf/def');            
 
             $opdate=$this->date2Eng(Yii::app()->getRequest()->getPost("opdate"));            
@@ -501,8 +506,8 @@ echo $soap->addConfDoc(CJSON::encode($conf));
          echo CJSON::encode($events);
         }
 	
-	public function filters()
-	{
+	    public function filters()
+      	{
 		// return the filter configuration for this controller, e.g.:
 		/*return array(
 			'inlineFilterName',
