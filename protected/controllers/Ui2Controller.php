@@ -14,10 +14,20 @@ class Ui2Controller extends Controller
 
     public function actionLogin() {
 
-        $krbauth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
-
-
-        if ($krbauth->authenticate()) {
+        switch (TSysClass::getSetting('auth','type')) {
+            case "simple":
+               if (!(empty($_GET['login']) && empty($_GET['pass']))) {
+                 $auth=new SimpleUserIdentity($_GET['login'],$_GET['pass']);
+               } else {
+                   // Action didn't show form or user didn't fill required fields.
+                   $this->redirect('simpleauthform');
+               };
+            break;
+            case "ad":
+                $krbauth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
+            break;
+        };
+        if ($auth->authenticate()) {
             Yii::app()->user->login($krbauth);
             $this->redirect('index');
         } else {
@@ -95,17 +105,13 @@ class Ui2Controller extends Controller
 			),
 		);
 	}
-
+    */
 	public function actions()
 	{
 		// return external action classes, e.g.:
 		return array(
-			'action1'=>'path.to.ActionClass',
-			'action2'=>array(
-				'class'=>'path.to.AnotherActionClass',
-				'propertyName'=>'propertyValue',
-			),
+			'simpleauthform'=>'actions.SimpleAuth',
 		);
 	}
-	*/
+
 }
