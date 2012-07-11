@@ -14,7 +14,7 @@ class Ui2Controller extends Controller
 
     public function actionLogin() {
 
-        switch (TSysClass::getSetting('auth','type')) {
+        switch (SysClass::getSetting('auth','type','simple')) {
             case "simple":
                if (!(empty($_GET['login']) && empty($_GET['pass']))) {
                  $auth=new SimpleUserIdentity($_GET['login'],$_GET['pass']);
