@@ -27,6 +27,7 @@ class Ui2Controller extends Controller
                 $krbauth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
             break;
         };
+        /*
         if ($auth->authenticate()) {
             Yii::app()->user->login($krbauth);
             $this->redirect('index');
@@ -40,14 +41,14 @@ class Ui2Controller extends Controller
                     echo "Формат имени пользователя ошибочный. Что Вы мне подсунули???";
                     break;
             };
-        };
+        };   */
     }
 
 	public function actionIndex()
 	{
-		$this->render('index',array(
+		/*$this->render('index',array(
                                     'user'=>$this->user
-                                    ));
+                                    ));       */
 	}
 
     public function actionGetDetailsInBase64() {
@@ -86,6 +87,9 @@ class Ui2Controller extends Controller
                 array('allow',
                       'users'=>array('@')
                      ),
+                array('allow',
+                      'actions'=>array('login','simpleauthform'),
+                      'users'=>array('*')),
             array('deny',
                   'users'=>array('*')
                  )
@@ -110,7 +114,7 @@ class Ui2Controller extends Controller
 	{
 		// return external action classes, e.g.:
 		return array(
-			'simpleauthform'=>'actions.SimpleAuth',
+			'simpleauthform'=>'application.controllers.actions.SimpleAuthForm',
 		);
 	}
 

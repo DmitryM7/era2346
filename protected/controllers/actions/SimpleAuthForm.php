@@ -8,9 +8,8 @@
  */
 class SimpleAuthForm extends CAction
 {
-
     public function run() {
-       $this->render('SimpleAuthForm');
+       $this->controller->render('simpleauthform');
     }
 
 }

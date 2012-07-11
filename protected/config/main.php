@@ -36,8 +36,8 @@ return array(
 	'components'=>array(
 		'user'=>array(
 			// enable cookie-based authentication
-			'allowAutoLogin'=>true,
-                        'loginUrl'=>array('ui/login')
+			//'allowAutoLogin'=>true,
+            'loginUrl'=>array('ui2/login')
 		),
 		// uncomment the following to enable URLs in path-format
 		
