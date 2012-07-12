@@ -1,8 +1,18 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: user
- * Date: 7/11/12
- * Time: 9:48 PM
- * To change this template use File | Settings | File Templates.
- */
+    Yii::app()->getClientScript()->registerPackage('frm');
+?>
+
+<div>
+    <form method="get" action="<?php $this->createUrl('ui2/login') ?>">
+        <dl>
+            <dt><label>Имя пользователя:</label></dt>
+            <dd><input type="text" model="login"></dd>
+
+            <dt><label>Пароль:</label></dt>
+            <dd><input type="text" model="pass"></dd>
+
+           <input type="submit" name="go" value="Войти">
+        </dl>
+    </form>
+</div>
+</div>
