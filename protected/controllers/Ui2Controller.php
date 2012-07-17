@@ -12,6 +12,9 @@ class Ui2Controller extends Controller
         $this->_user=$user;
     }
 
+    public function actionSimpleAuthForm() {
+        $this->render('simpleauthform');
+    }
     public function actionLogin() {
 
         switch (SysClass::getSetting('auth','type','simple')) {
@@ -24,15 +27,14 @@ class Ui2Controller extends Controller
                };
             break;
             case "ad":
-                $krbauth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
+                $auth=new KerbUserIdentity($_SERVER['REDIRECT_REMOTE_USER'],'');
             break;
         };
-        /*
         if ($auth->authenticate()) {
-            Yii::app()->user->login($krbauth);
-            $this->redirect('index');
+            Yii::app()->user->login($auth);
+            $this->redirect(Yii::app()->user->getReturnUrl('index'));
         } else {
-            switch ($krbauth->errorCode)
+            switch ($auth->errorCode)
             {
                 case KerbUserIdentity::ERROR_UNKNOWN_USER:
                     echo "Пользователя нет во внутренней БД. Проведите синхронизация с AD.";
@@ -41,14 +43,14 @@ class Ui2Controller extends Controller
                     echo "Формат имени пользователя ошибочный. Что Вы мне подсунули???";
                     break;
             };
-        };   */
+        };
     }
 
 	public function actionIndex()
 	{
-		/*$this->render('index',array(
+		$this->render('index',array(
                                     'user'=>$this->user
-                                    ));       */
+                                    ));
 	}
 
     public function actionGetDetailsInBase64() {
@@ -110,12 +112,14 @@ class Ui2Controller extends Controller
 		);
 	}
     */
-	public function actions()
+	/*
+    public function actions()
 	{
 		// return external action classes, e.g.:
+
 		return array(
-			'simpleauthform'=>'application.controllers.actions.SimpleAuthForm',
+			'simpleauthform'=>'application.controllers.actions.SimpleAuthForm'
 		);
 	}
-
+     */
 }
