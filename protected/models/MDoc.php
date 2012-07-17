@@ -3,7 +3,8 @@
  * @property string  $ext1
  * 
  */
-class MDoc extends Doc
+//todo Переделать в абстрактный класс
+class MDoc extends Doc implements ISignable
 {          
         CONST visaPermit ='note visa permit simple';
         CONST visaDeny   ='note visa deny simple';
@@ -12,18 +13,22 @@ class MDoc extends Doc
         CONST stickError= 'note message error simple';
 
 
-        public static function getClassCode() {
-            return 'doc';
-        }
+    public static function model($className=__CLASS__)
+    {
+        return parent::model($className);
+    }
 
-      function startsWith($haystack, $needle)
-       {
+    public static function getClassCode() {
+        return $this->taxon;
+    }
+
+    function startsWith($haystack, $needle)
+      {
           $length = strlen($needle);
           return (substr($haystack, 0, $length) === $needle);
       }
-
     function endsWith($haystack, $needle)
-    {
+      {
         $length = strlen($needle);
         if ($length == 0) {
             return true;
@@ -33,218 +38,65 @@ class MDoc extends Doc
         return (substr($haystack, $start) === $needle);
     }
 
-
     public function getChildren() {
-            $docs=self::model()->findAll(array('condition'=>'pid=:pid','params'=>array(':pid'=>$this->id)));
+            $docs=self::model()->findAll(array('condition'=>'pid=:pid',
+                                               'params'=>array(':pid'=>$this->id))
+                                        );
             return $docs;
-        }
-        
-        public function rules()
-        {
-            return array(array("details","required"));
-        }
-        public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}        
-        public static function del($fltjson)
-        {
-            $fltobj=json_decode($fltjson);
-                        
-            /**
-             * Документы из электронного архива не удаляются,
-             * а помечаются удаленными. При этом подписи так же
-             * помечаются удаленными.
-             */
-            $con=Yii::app()->db;
-            $command=$con->createCommand();
-            $docs=MDoc::model()->findAll(array("condition"=>"expn=:expn","params"=>array(":expn"=>$fltobj->expn)));
+    }
 
-            $lstp=array();
-            
-            foreach ($docs as $doc)
-            {
-                $lstp[]=$doc->id;
-            }
-            $tran=$con->beginTransaction();
-            $res=0;
-            try {
-                    $res=$command->update("doc",array("isdelete"=>"1"),"expn=:expn",array(":expn"=>$fltobj->expn));
-                    foreach ($lstp as $value)
-                    {
-                        $res=$res+$command->update("doc",array("isdelete"=>"1"),"pid=:pid",array(":pid"=>$value));
-                    }
-                    $tran->commit();
-                }
-                catch (Exception $e)
-                {
-                       $tran->rollBack();
-                       $res=0;
-                }
-             
-            return $res;
-        }
-        public function delCurrent() {
+    public function delCurrent() {
             return $this->markDelete($this->primaryKey);
-        }
+    }
 
-        public function delOnlyIfChild($id) {
-            $doc=MDoc::model()->isChild()->findByPk($id);
-            return $doc->delete();
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function delOnlyIfChild($id) {
+       $doc=MDoc::model()->isChild()->findByPk($id);
+       return $doc->delete();
+    }
 
-        }
-        protected function markDelete($id) {
-            $doc=MDoc::model()->findByPk($id);
-            $doc->isdelete=1;
-            
-            $signs=MDoc::model()->findAll(array('condition'=>'pid=:pid','params'=>array(':pid'=>$this->id)));
+    /**
+     * Method marks document and his children as deleted.
+     * @param $id PK Parent document
+     * @return int
+     */
+    protected function markDelete() {
+         $signs=MDoc::model()->findAll(array(
+                                             'condition'=>'pid=:pid',
+                                             'params'=>array(':pid'=>$this->id)
+                                             ));
 
-            
-           $tr=$doc->dbConnection->beginTransaction();
+         $tr=$this->dbConnection->beginTransaction();
            
-           try {
-               $doc->save();
-                foreach ($signs as $sign) {
-                    $sign->isdelete=1;
-                    $sign->save();
-                };              
+         try {
+              $this->isdelete=1;
+               if ($this->save()) {
+                   foreach ($signs as $sign) {
+                       $sign->isdelete=1;
+                       //todo Сделать откат в случае ошибки удаления хотя бы одного документа
+                       $sign->save();
+                   };
+               };
            } catch (CException $e) {
                $tr->rollback();
                return FALSE;
            }
-            $tr->commit();
-            return TRUE;
-        }
-        public static function getChildByFlt($flt) {
-            $fltobj = CJSON::decode($flt);
-            $command = Yii::app()->db->createCommand();
-            
-            $command->select('doc.id as did,expn,author,inspector,dt')
-                    ->from(doc)                    
-                    ->where("pid=:pid
-                             AND isdelete=0",
-                                array(":pid"=>$fltobj['pid'])
-                             );
-                    //->order($fltobj['sidx']." ".$fltobj['sord']);
-            
-            $rows=$command->queryAll();
-            
-            $res=array();
-            $i=0;
-            foreach ($rows as $row)
-            {        
-                $res[$i]['id']=$row['did'];
-                $res[$i]['cell']=array($row['did'],$row['author'],$row['dt']);
-                $i++;
-            }
-            
-            $resobj->rows=$res;
-            return $resobj;
-                    
-            
-        }
-        /**
-         *
-         * @param string $opdate 
-         * 
-         */
-        public static function getDocByOpDate($opdate) {
-            $command=Yii::app()->db->createCommand();
-            $command->select('id, opdate, expn, author, inspector, fext,pid')
-                    ->from(doc)
-                    ->where("class=:class AND opdate=:opdate AND isDelete=0 AND pid IS NULL",
-                            array(":class"=>self::getClassCode(),":opdate"=>$opdate)
-                            )
-                    ->order('opdate, inspector');
-            $res=$command->queryAll();
-            
-            return $res;                    
-        }
+         $tr->commit();
+         return TRUE;
+    }
 
-        public static function getDocByFlt($flt) {
-            $fltobj = CJSON::decode($flt);
-            $command =  Yii::app()->db->createCommand();
-            
-            $classcode=isset($fltobj['classcode'])?$fltobj['classcode']:self::getClassCode();
-            
-        
-                $command->select('COUNT(*) AS FC')
-                    ->from(doc)
-                    ->join("status","doc.status=status.id")
-                    ->where("FIND_IN_SET(class,:classcode)
-                                            AND opdate=:opdate
-                                            AND author LIKE :author 
-                                            AND inspector LIKE :inspector 
-                                            AND expn LIKE :expn 
-                                            AND FIND_IN_SET(status,:status)
-                                            AND isdelete=0 AND pid IS NULL",
-                                array(":classcode"=>$fltobj['classcode'],
-                                      ":opdate"=>$fltobj['opdate'],
-                                      ":author"=>"%".$fltobj['author']."%",
-                                      ":inspector"=>"%".$fltobj['inspector']."%",
-                                      ":expn"=>"%".$fltobj['expn']."%",
-                                      ":status"=>$fltobj['status']
-                                     )
-                             );
-                    
-           $count=$command->queryScalar();
-            
-            $resobj = new StdClass();
-            $resobj->total = ceil($count/$fltobj['limit']);
-            
-            if ($fltobj['page']>$resobj->total) $fltobj['page']=$resobj->total;
-
-            $start=$fltobj['limit']*$fltobj['page']-$fltobj['limit'];
-            
-            $resobj->page=$fltobj['page'];
-            $resobj->records=$count;
-            
-            $command1 =  Yii::app()->db->createCommand();
-            $command1->select('doc.id as did,expn,author,inspector,title,status.name as st,dt')
-                    ->from(doc)
-                    ->join("status","doc.status=status.id")
-                    ->where("FIND_IN_SET(class,:classcode)
-                             AND opdate=:opdate
-                             AND author LIKE :author
-                             AND inspector LIKE :inspector
-                             AND expn LIKE :expn
-                             AND FIND_IN_SET(status,:status)
-                             AND isdelete=0 AND pid IS NULL",
-                                array(":classcode"=>$fltobj['classcode'],
-                                      ":opdate"=>$fltobj['opdate'],
-                                      ":author"=>"%".$fltobj['author']."%",
-                                      ":inspector"=>"%".$fltobj['inspector']."%",
-                                      ":expn"=>"%".$fltobj['expn']."%",
-                                      ":status"=>$fltobj['status']
-                                     )
-                             )                    
-                    ->offset($start)
-                    ->limit($fltobj['limit'])
-                    ->order($fltobj['sidx']." ".$fltobj['sord']);
-                    
-            
-            $rows=$command1->queryAll();
-            
-            $res=array();
-            $i=0;                     
-            foreach ($rows as $row)
-            {        
-                $res[$i]['id']=$row['did'];
-                $res[$i]['cell']=array($row['did'],$row['expn'],$row['author'],$row['inspector'],$row['title'],$row['st'],$row['dt']);
-                $i++;
-            }
-            
-            $resobj->rows=$res;
-            return $resobj;
-        }
         /**
          *
          * @param type $opdate
          * @param type $userid
          * @return type 
          */
-        public static function getDocByOpDateUser($opdate,$userid)
-        {   
+    public static function getDocByOpDateUser($opdate,$userid)
+      {
+            //todo Переделать на использование сохранных критериев
             /**
              * Отсекаем подписи.
              * Или другими словами выводим только детей.
@@ -256,41 +108,41 @@ class MDoc extends Doc
                                                )
                                         );
             return $docs;
-        }        
-        public static function getDocByOpDateInspector($opdate,$userid)
-        {
+     }
+     public static function getDocByOpDateInspector($opdate,$userid)
+      {
+            //todo Переделать на использование сохранных критериев
             $docs=MDoc::model()->findAll(array("condition"=>"class='".self::getClassCode()
                     ."' AND opdate=:opdate AND inspector=:inspector AND isdelete=0 AND pid IS NULL AND NOT EXISTS(SELECT * FROM doc AS cdoc WHERE cdoc.pid=t.id AND cdoc.inspector=t.inspector)",
                                                "params"=>array(":opdate"=>$opdate,":inspector"=>$userid)
                                                )
                                         );
             return $docs;
-        }        
-        public static function addSign($pid,$author,$inspector,$details)
+      }
+      //todo Передалать функцию на подпись инстанцированного объекта
+      public function addSign($author,$inspector,$details)
         {
-            $pdoc=MDoc::model()->findByPk($pid);
-            
             /**
              * Если документ, уже подписан,
              * то ничего не делаем.
              */
-            if ($pdoc->hasSign($author,$inspector)!==FALSE) {
+            if ($this->hasSign($author,$inspector)!==FALSE) {
                 return false;
             };
 
-            $tr=$pdoc->dbConnection->beginTransaction();
-            $pdoc->nextStatus();
+            $tr=$this->dbConnection->beginTransaction();
+            $this->nextStatus();
             
             try {
             $doc=new MDoc();
             $doc->author=$author;
             $doc->inspector=$inspector;
             $doc->details=$details;
-            $doc->opdate=$pdoc->opdate;
-            $doc->pid=$pdoc->id;
+            $doc->opdate=$this->opdate;
+            $doc->pid=$this->id;
             
             $res1 = $doc->save();
-            $res2 = $pdoc->save();            
+            $res2 = $this->save();
             }
             catch (CException $e) {
                 $tr->rollback();
@@ -305,6 +157,7 @@ class MDoc extends Doc
                 return false;
             }
         }
+
         public function takeAuthor($user) {
             $this->author=$user->un2;
             return $this;
@@ -313,9 +166,7 @@ class MDoc extends Doc
             $this->inspector=$user->un2;
             return $this;
         }
-        /**
-         * Сохраняем документ
-         */
+
         public function nextStatus($action=null)
         {
             $connection=Yii::app()->db;
@@ -332,22 +183,12 @@ class MDoc extends Doc
             
             if (is_null($this->status))
             {
+                //todo Ввести на статусах реквизит Начальный в зависимости от него устанавливать значение
                 $connection=Yii::app()->db;
                 $command=$connection->createCommand("SELECT MIN(id) FROM status");
                 $this->status=$command->queryScalar();
             };
             return parent::beforeValidate();
-        }
-        public function save()
-        {                                                           
-            //if (!MOpdate::isClose($this->opdate))
-            //{
-                return parent::save();
-            //}
-            //else
-            //{
-              //  throw new Exception('Day is Close or Not Open!');
-            //}
         }
 
         public function isChild($pid=null) {
@@ -355,28 +196,6 @@ class MDoc extends Doc
                 'condition'=>'pid IS NOT NULL'
             ));
             return $this;
-        }
-        public function sign($whoAmI,$authorUn2,$sign) {
-            $tr=$this->dbConnection->beginTransaction();
-            $this->nextStatus();
-            try {
-                $doc=new MDoc();
-                $doc->author=$authorUn2;
-                $doc->author=$authorUn2;
-                $doc->detaisl=$sign;
-                $doc->opdate=$this->opdate;
-                $doc->pid=$this->id;
-                $res1 = $doc->save();
-                $res2 = $this->save();
-
-            } catch (CException $e) {
-                $tr->rollback();
-            };
-
-            if ($res1 && $res2) {
-                $tr->commit();
-                return true;
-            }
         }
 
         /**
@@ -395,7 +214,7 @@ class MDoc extends Doc
                 return false;
             };
 
-            return $this->sign($whoAmI,$author,$sign);
+            return $this->addSign($whoAmI,$author,$sign);
         }
         /**
          * Возвращает указатель на объект подписи,
@@ -434,9 +253,9 @@ class MDoc extends Doc
             };
         }
 
-        public function taxon($num=null) {
-            $a=explode(' ',$this->class);
-            return $a[$num];
-        }
+    public function rules()
+    {
+        return array(array("details","required"));
+    }
 }
 ?>
