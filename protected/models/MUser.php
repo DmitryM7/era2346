@@ -1,5 +1,5 @@
 <?php
-class MUser extends User
+class MUser extends User implements IUser
 {
         public static function model($className=__CLASS__)
 	{

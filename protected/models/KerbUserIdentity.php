@@ -1,8 +1,7 @@
 <?php
 
-class KerbUserIdentity extends CUserIdentity {
-    const ERROR_UNKNOWN_USER=1000;
-
+class KerbUserIdentity extends UserIdentity
+{
     private $_id;
     
     /**
@@ -17,7 +16,6 @@ class KerbUserIdentity extends CUserIdentity {
     }
     
     public function authenticate() {
-
         if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9]+[a-zA-Z0-9_-]*)+$/",$this->username))
             {
                 $un=$this->getUser();                
@@ -28,11 +26,10 @@ class KerbUserIdentity extends CUserIdentity {
                                             )
                                        );
 
-                            if (!is_null($user)) {
+                            if ($user instanceof IUser) {
                                         $this->_id=$user->id;
                                         $this->errorCode=self::ERROR_NONE;
-                                        $this->setState('userinfo',CJSON::encode($user));            
-                                        
+                                        $this->setState('userinfo',CJSON::encode($user));
                             }
                             else {
                                     $this->errorCode=self::ERROR_UNKNOWN_USER;

@@ -22,7 +22,7 @@ $().ready(function () {
   $('#rwdg').accordion({autoHeight: false});
   $('#whoPresent').onlineInformer({
         delay :'10000',
-        url   :'http://localwww2/ui/markUser',
+        url   :'<?php echo $this->createUrl('wdg/markUser'); ?>',
         whoAmI:'<?php echo $user->email; ?>'
     });
   $('#wall').wall({
@@ -321,22 +321,22 @@ $('#docs').bind('brw_menu',function (e,action) {
             </ul>
         </li>
         <li>
-            <a href="#dd">ПОДПИСАТЬ</a>
+            <a href="#dd">Подписать</a>
         </li>
         <li>
             <a href="#bb" class="sf-with-ul">Коллеги</a>
             <ul>
                 <li><a href="#bb1">Список</a></li>
-                <li><a href="#bb2">sfsfs</a></li>
+                <li><a href="#bb2">Управление</a></li>
             </ul>
         </li>
         <li>
-            <a href="#cc">ДНИ</a>
+            <a href="#cc">Дни</a>
         </li>
         <li>
-            <a href="#c" class="sf-with-ul">Меню</a>
+            <a href="#c" class="sf-with-ul">Профиль</a>
             <ul>
-                <li><a href="#c1" class="sf-with-ul">Фильтр</a></li>
+                <li><a href="#c1" class="sf-with-ul">Пароль</a></li>
             </ul>
         </li>
 
