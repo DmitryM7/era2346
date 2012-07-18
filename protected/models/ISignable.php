@@ -8,5 +8,17 @@
  */
 interface ISignable
 {
+    /**
+     * Save sign to database.
+     * @abstract
+     * @param $author
+     * @param $inspector
+     * @param $details
+     * @return mixed
+     */
     public function addSign($author,$inspector,$details);
+    /*
+     * Method returns all saved signs.
+     */
+    public function getAllSigns();
 }
