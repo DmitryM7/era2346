@@ -4,7 +4,7 @@
  * 
  */
 //todo Переделать в абстрактный класс
-class MDoc extends Doc implements ISignable
+class MDoc extends Doc implements ISignable, IStatusable
 {          
         CONST visaPermit ='note visa permit simple';
         CONST visaDeny   ='note visa deny simple';
@@ -39,7 +39,7 @@ class MDoc extends Doc implements ISignable
     }
 
     /**
-     * Method checks if document is child then delete.
+     * Method checks if document is child and then delete.
      * If document is parent do nothing.
      * @param $id
      * @return mixed
@@ -54,7 +54,7 @@ class MDoc extends Doc implements ISignable
      * @param $id PK Parent document
      * @return int
      */
-    protected function markDelete() {
+   protected function markDelete() {
          $signs=MDoc::model()->findAll(array(
                                              'condition'=>'pid=:pid',
                                              'params'=>array(':pid'=>$this->id)
@@ -79,9 +79,14 @@ class MDoc extends Doc implements ISignable
          return TRUE;
     }
 
-      //todo Передалать функцию на подпись инстанцированного объекта
-      public function addSign($author,$inspector,$details)
-        {
+    /**
+     *
+     * @param $author
+     * @param $inspector
+     * @param $details
+     * @return bool|mixed
+     */
+    public function addSign($author,$inspector,$details) {
             /**
              * Если документ, уже подписан,
              * то ничего не делаем.
@@ -117,34 +122,33 @@ class MDoc extends Doc implements ISignable
                 $tr->rollback();
                 return false;
             }
-        }
+      }
 
-      public function getAllSigns() {
+   public function getAllSigns() {
         $signs=MDoc::model()->findAll(
             array(
                 'condtion'=>'pid=:pid AND isdelete=0',
                 array(':pid'=>$this->id)
             ));
         return $signs;
-      }
-        public function takeAuthor($user) {
+    }
+
+   public function takeAuthor($user) {
             $this->author=$user->un2;
             return $this;
-        }
-        public function takeInspector($user) {
+    }
+
+   public function takeInspector($user) {
             $this->inspector=$user->un2;
             return $this;
-        }
+    }
 
-        public function nextStatus($action=null)
-        {
-            $connection=Yii::app()->db;
-            $command=$connection->createCommand("SELECT MIN(id) FROM status WHERE id>".$this->status);
-            $nextStatus=$command->queryScalar();
-            $this->status=$nextStatus;            
-        }
-        protected function beforeValidate()
-        {
+   //todo Обеспечить хождение по статусам.
+   public function nextStatus($action=null) {
+
+   }
+
+   protected function beforeValidate() {
             if ($this->isNewRecord) 
             {
                 $this->dt=new CDbExpression('NOW()');
@@ -152,28 +156,27 @@ class MDoc extends Doc implements ISignable
             
             if (is_null($this->status))
             {
-                //todo Ввести на статусах реквизит Начальный в зависимости от него устанавливать значение
-                $connection=Yii::app()->db;
-                $command=$connection->createCommand("SELECT MIN(id) FROM status");
-                $this->status=$command->queryScalar();
+                $begStatus=MStatus::getBegin();
+                $this->status=$begStatus->primaryKey;
             };
-            return parent::beforeValidate();
-        }
 
-        public function isChild($pid=null) {
+            return parent::beforeValidate();
+      }
+
+   public function isChild($pid=null) {
             $this->getDbCriteria()->mergeWith(array(
                 'condition'=>'pid IS NOT NULL'
             ));
             return $this;
-        }
+     }
 
-    /**
+   /**
      * Method filters parent documents by opdate and author.
      * @param DATE $opdate
      * @param CHAR $author
      * @return MDoc
      */
-    public function byDateUser($opdate,$author) {
+   public function byDateUser($opdate,$author) {
        $this->getDbCriteria()->mergeWith(
           array('condition'=>'opdate=:opdate AND author=:author AND isdelete=0 AND pid IS NULL',
                 'params'=>array(':opdate'=>$opdate,
@@ -182,12 +185,12 @@ class MDoc extends Doc implements ISignable
             return $this;
      }
 
-    /**
+   /**
      * Method filters parent documents by opdate and author.
      * @param DATE $opdate
      * @param CHAR $inspector
      */
-    public function byDateInspector($opdate,$inspector) {
+   public function byDateInspector($opdate,$inspector) {
      $this->getDbCriteria()->mergeWith(
          array('condition'=>'opdate=:opdate AND inpector=:author AND isdelete=0 AND pid IS NULL',
                'params'=>array(':opdate'=>$opdate,
@@ -200,7 +203,7 @@ class MDoc extends Doc implements ISignable
      * Method excludes documents with signs.
      * @param $author
      */
-    public function withoutSign($author) {
+   public function withoutSign($author) {
         $this->getDbCriteria()->mergeWith(
             array('condition'=>'NOT EXISTS(SELECT * FROM doc AS child WHERE child.pid=t.id AND child.author=t.author'));
         return $this;
@@ -214,7 +217,7 @@ class MDoc extends Doc implements ISignable
          * @param Binary $sign
          * @return bool
          */
-        public function checkAndSign($whoAmI,$author,$sign) {
+   public function checkAndSign($whoAmI,$author,$sign) {
             if ($this->hasSign($author,$author)!==FALSE) {
                 return false;
             };
@@ -231,7 +234,7 @@ class MDoc extends Doc implements ISignable
          * @param STRING $inspector
          * @return mixed 
          */
-        public function hasSign($author,$inspector) {
+   public function hasSign($author,$inspector) {
             $sign=MDoc::model()->find(array(
                                             'condition'=>'pid=:doc AND author=:author AND inspector=:inspector AND isdelete=0',
                                             'params'=>array(':doc'=>$this->primaryKey,':author'=>$author,':inspector'=>$inspector)
@@ -244,7 +247,7 @@ class MDoc extends Doc implements ISignable
         /** Проверяем является ли пользователь $user
          * автором или контроллером документа.
          * */
-	    public function isResponsible($user) {
+   public function isResponsible($user) {
             //По заявке #1032
             //Временно ввожу возможность
             //подписи для любого пользователя.
@@ -261,8 +264,7 @@ class MDoc extends Doc implements ISignable
             };
         }
 
-    public function rules()
-    {
+   public function rules() {
         return array(array("details","required"));
     }
 }

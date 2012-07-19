@@ -8,11 +8,12 @@ class MStatus extends Status {
   }
 
     /**
+     *
      * @static
      *
      */
     public static function getBegin() {
      $begStatus = self::model()->find(array('condition'=>'isbegin=:0'));
-     return $begStatus->primaryKey;
+     return $begStatus;
     }
 };        

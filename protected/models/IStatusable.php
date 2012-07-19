@@ -2,11 +2,11 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: dmaslov
- * Date: 11.07.12
- * Time: 17:47
+ * Date: 19.07.12
+ * Time: 8:57
  * To change this template use File | Settings | File Templates.
  */
-class AuthClass
+class IStatusable
 {
-
+    public function nextStatus($action);
 }
