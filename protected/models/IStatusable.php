@@ -6,7 +6,7 @@
  * Time: 8:57
  * To change this template use File | Settings | File Templates.
  */
-class IStatusable
+interface IStatusable
 {
     public function nextStatus($action);
 }

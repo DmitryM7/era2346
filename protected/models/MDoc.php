@@ -96,7 +96,7 @@ class MDoc extends Doc implements ISignable, IStatusable
             };
 
             $tr=$this->dbConnection->beginTransaction();
-            $this->nextStatus();
+            $this->nextStatus(__METHOD__);
             
             try {
             $doc=new MDoc();
@@ -144,7 +144,7 @@ class MDoc extends Doc implements ISignable, IStatusable
     }
 
    //todo Обеспечить хождение по статусам.
-   public function nextStatus($action=null) {
+   public function nextStatus($action) {
 
    }
 
@@ -209,14 +209,12 @@ class MDoc extends Doc implements ISignable, IStatusable
         return $this;
     }
 
-        /**
-         *  Проверяет возможность подписи и в случае
-         * выполнения всех условий подписывает документ.
-         * @param MUser $whoAmI
-         * @param Mixed $author
-         * @param Binary $sign
-         * @return bool
-         */
+   /**
+    * @param MUser $whoAmI
+    * @param Mixed $author
+    * @param Binary $sign
+    * @return bool
+    */
    public function checkAndSign($whoAmI,$author,$sign) {
             if ($this->hasSign($author,$author)!==FALSE) {
                 return false;
@@ -227,9 +225,10 @@ class MDoc extends Doc implements ISignable, IStatusable
 
             return $this->addSign($whoAmI,$author,$sign);
         }
-        /**
-         * Возвращает указатель на объект подписи,
-         * если такой имеется или FALSE.
+
+   /**
+         * If document has sign method returns Sign Document,
+         * else method returns false.
          * @param STRING $author
          * @param STRING $inspector
          * @return mixed 
@@ -240,13 +239,18 @@ class MDoc extends Doc implements ISignable, IStatusable
                                             'params'=>array(':doc'=>$this->primaryKey,':author'=>$author,':inspector'=>$inspector)
                                             )
                                         );
-            
             return is_null($sign) ? FALSE : $sign;
         }
 
-        /** Проверяем является ли пользователь $user
-         * автором или контроллером документа.
-         * */
+   public function getData2Sign() {
+
+   }
+
+   /**
+    * Is $user author or inspector of document?
+    * @param MUser $user
+    * @return bool
+    **/
    public function isResponsible($user) {
             //По заявке #1032
             //Временно ввожу возможность

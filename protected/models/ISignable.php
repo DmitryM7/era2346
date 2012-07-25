@@ -17,8 +17,16 @@ interface ISignable
      * @return mixed
      */
     public function addSign($author,$inspector,$details);
+
     /*
      * Method returns all saved signs.
      */
     public function getAllSigns();
+
+    /**
+     * Method returns data that should be signed.
+     * @abstract
+     * @return String
+     */
+    public function getData2Sign();
 }
