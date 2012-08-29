@@ -2,7 +2,7 @@
     Yii::app()->getClientScript()->registerPackage('frm');
 ?>
 <div>Внимание! Система находится в режиме защиты от сбоев!</div>
-<div>
+ <div class="authpanel simple">
     <form method="get" action="<?php echo $this->createUrl('ui2/login') ?>">
         <dl>
             <dt><label>Имя пользователя:</label></dt>
@@ -14,5 +14,5 @@
            <input type="submit" name="go" value="Войти">
         </dl>
     </form>
-</div>
+ </div>
 </div>

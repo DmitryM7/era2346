@@ -45,7 +45,10 @@ class Ui2Controller extends Controller
             };
         };
     }
-
+    public function actionLogOut() {
+        Yii::app()->user->logout();
+        $this->redirect('index');
+    }
 	public function actionIndex()
 	{
 		$this->render('index',array(
@@ -90,7 +93,7 @@ class Ui2Controller extends Controller
                       'users'=>array('@')
                      ),
                 array('allow',
-                      'actions'=>array('login','simpleauthform'),
+                      'actions'=>array('login','simpleauthform','logout'),
                       'users'=>array('*')),
             array('deny',
                   'users'=>array('*')

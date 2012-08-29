@@ -76,6 +76,9 @@ $().ready(function () {
             case "#bb":
                 $('#people').brw('sgrid');
                 break;
+            case "#logout":
+                window.location.href='<?php echo $this->createUrl('logout');?>';
+                break;
         };
     });
 
@@ -486,7 +489,8 @@ $('#docs').bind('brw_menu',function (e,action) {
         <div id="wdgNote">
         </div>
 </div>
-<div id='signDialog' title="Пописываю документы ...">
+
+    <div id='signDialog' title="Пописываю документы ...">
     <div id="progressbar"></div>
 </div>
 

@@ -30,13 +30,6 @@ class MDoc extends Doc implements ISignable, IStatusable
             return $docs;
     }
 
-    /**
-     * Delete current document.
-     * @return int
-     */
-    public function delCurrent() {
-            return $this->markDelete($this->primaryKey);
-    }
 
     /**
      * Method checks if document is child and then delete.
