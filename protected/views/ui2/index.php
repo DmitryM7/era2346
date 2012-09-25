@@ -340,7 +340,12 @@ $('#docs').bind('brw_menu',function (e,action) {
             <a href="#c" class="sf-with-ul">Профиль</a>
             <ul>
                 <li><a href="#c1" class="sf-with-ul">Пароль</a></li>
-                <li><a href="#logout" class="sf-with-ul">Выход</a></li>
+                <li><a href="#c2" class="sf-with-ul">Интерфейс &gt;</a>
+                    <ul>
+                        <li><a href="#c2" class="sf-with-ul">Классический</a></li>
+                        <li><a href="#c2" class="sf-with-ul">Карта1</a></li>
+                    </ul>
+                </li>
             </ul>
         </li>
 
