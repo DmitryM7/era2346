@@ -8,5 +8,16 @@
  */
 interface IStatusable
 {
-    public function nextStatus($action);
+    /**
+     * Method returns current status of object.
+     * @return mixed
+     */
+    public function getStatus();
+
+    /**
+     * Method sets new status to object.
+     * @param $status
+     * @return mixed
+     */
+    public function setStatus($status);
 }
