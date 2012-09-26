@@ -84,13 +84,6 @@ class MFinDoc extends MDoc implements ISignable
         return $this->addSign($whoAmI,$author,$sign);
     }
 
-    /**
-     * Method adds sign to document.
-     * @param $author
-     * @param $inspector
-     * @param $details
-     * @return bool|mixed
-     */
     public function addSign($author,$inspector,$details) {
         /**
          * Если документ, уже подписан,
@@ -128,9 +121,7 @@ class MFinDoc extends MDoc implements ISignable
             return false;
         }
     }
-
-    /** Method returns all document signs. */
-    public function getAllSigns() {
+    public function getSigns() {
         $signs=MDoc::model()->findAll(
             array(
                 'condtion'=>'pid=:pid AND isdelete=0',
@@ -141,4 +132,8 @@ class MFinDoc extends MDoc implements ISignable
     public function getData2Sign() {
 
     }
+    public function hasErrorSign() {
+
+    }
+
 }

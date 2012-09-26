@@ -18,10 +18,6 @@ interface ISignable
      */
     public function addSign($author,$inspector,$details);
 
-    /*
-     * Method returns all saved signs.
-     */
-    public function getAllSigns();
 
     /**
      * Method returns data that should be signed.
@@ -29,4 +25,11 @@ interface ISignable
      * @return String
      */
     public function getData2Sign();
+
+    /*
+    * Method returns all saved signs.
+    */
+    public function getSigns();
+    public function hasErrorSign();
+    public function hasSign($author,$inspector);
 }
