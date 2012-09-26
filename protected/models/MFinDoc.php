@@ -8,6 +8,10 @@
  */
 class MFinDoc extends MDoc implements ISignable
 {
+    public static function model($className=__CLASS__)
+    {
+        return parent::model($className);
+    }
     public function isChild($pid=null) {
         $this->getDbCriteria()->mergeWith(array(
             'condition'=>'pid IS NOT NULL'
@@ -35,61 +39,6 @@ class MFinDoc extends MDoc implements ISignable
     public function delOnlyIfChild($id) {
         $doc=MDoc::model()->isChild()->findByPk($id);
         return $doc->delete();
-    }
-
-    /**
-     * Method adds sign to document.
-     * @param $author
-     * @param $inspector
-     * @param $details
-     * @return bool|mixed
-     */
-    public function addSign($author,$inspector,$details) {
-        /**
-         * Если документ, уже подписан,
-         * то ничего не делаем.
-         */
-        if ($this->hasSign($author,$inspector)!==FALSE) {
-            return false;
-        };
-
-        $tr=$this->dbConnection->beginTransaction();
-        $this->nextStatus(__METHOD__);
-
-        try {
-            $doc=new MDoc();
-            $doc->taxon=MDoc::signTaxon;
-            $doc->author=$author;
-            $doc->inspector=$inspector;
-            $doc->details=$details;
-            $doc->opdate=$this->opdate;
-            $doc->pid=$this->id;
-
-            $res1 = $doc->save();
-            $res2 = $this->save();
-        }
-        catch (CException $e) {
-            $tr->rollback();
-        }
-
-        if ($res1 && $res2) {
-            $tr->commit();
-            return true;
-        }
-        else {
-            $tr->rollback();
-            return false;
-        }
-    }
-
-    /** Method returns all document signs. */
-    public function getAllSigns() {
-        $signs=MDoc::model()->findAll(
-            array(
-                'condtion'=>'pid=:pid AND isdelete=0',
-                array(':pid'=>$this->id)
-            ));
-        return $signs;
     }
 
     /**
@@ -135,6 +84,60 @@ class MFinDoc extends MDoc implements ISignable
         return $this->addSign($whoAmI,$author,$sign);
     }
 
+    /**
+     * Method adds sign to document.
+     * @param $author
+     * @param $inspector
+     * @param $details
+     * @return bool|mixed
+     */
+    public function addSign($author,$inspector,$details) {
+        /**
+         * Если документ, уже подписан,
+         * то ничего не делаем.
+         */
+        if ($this->hasSign($author,$inspector)!==FALSE) {
+            return false;
+        };
+
+        $tr=$this->dbConnection->beginTransaction();
+        $this->nextStatus(__METHOD__);
+
+        try {
+            $doc=new MFinDoc();
+            $doc->taxon=MDoc::signTaxon;
+            $doc->author=$author;
+            $doc->inspector=$inspector;
+            $doc->details=$details;
+            $doc->opdate=$this->opdate;
+            $doc->pid=$this->id;
+
+            $res1 = $doc->save();
+            $res2 = $this->save();
+        }
+        catch (CException $e) {
+            $tr->rollback();
+        }
+
+        if ($res1 && $res2) {
+            $tr->commit();
+            return true;
+        }
+        else {
+            $tr->rollback();
+            return false;
+        }
+    }
+
+    /** Method returns all document signs. */
+    public function getAllSigns() {
+        $signs=MDoc::model()->findAll(
+            array(
+                'condtion'=>'pid=:pid AND isdelete=0',
+                array(':pid'=>$this->id)
+            ));
+        return $signs;
+    }
     public function getData2Sign() {
 
     }
