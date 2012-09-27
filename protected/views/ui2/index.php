@@ -354,7 +354,7 @@ $('#docs').bind('brw_menu',function (e,action) {
 
 <div id="main_window" title="Электронный архив" class="span-24 zi1">
 
-    <div id="docs" class="brw span-18 last zi1" provider='http://localwww2/ui'>
+    <div id="docs" class="brw span-18 last zi1" provider='<?php echo $this->createUrl('docs/byfilter'); ?>'>
         <div class="brw-find" title="Произвольный фильтр" >
             <form>
                 <dl>
