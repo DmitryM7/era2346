@@ -116,7 +116,8 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
     }
     public function getFile() {
         if (is_null($this->_currFile)) {
-            $this->_currFile=MFdata::model()->byPid($this->id)->find();
+            $this->_currFile=MFdata::model()->byPid($this->id)
+                                            ->find();
         };
         return $this->_currFile;
     }
