@@ -81,4 +81,9 @@ class MSign extends MDoc implements ISign
         ));
         return $this;
     }
+
+    public function markDelete() {
+        $this->isdelete=1;
+        return $this->save();
+    }
 }

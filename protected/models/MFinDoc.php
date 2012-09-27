@@ -125,4 +125,43 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
 
     }
 
+    /**
+     * Method marks document, his children, his signs as deleted.
+     * @return bool
+     */
+    public function markDelete() {
+        $tr=$this->dbConnection->beginTransaction();
+
+        try {
+            $this->isdelete=1;
+            if ($this->save()) {
+
+                $children=$this->getChildren();
+                foreach ($children as $child) {
+                    if (!$child->markDelete()) {
+                        $tr->rollback();
+                        return false;
+                    };
+                };
+
+                $signs=$this->getSigns();
+                foreach ($signs as $sign) {
+                    if (!$sign->markDelete()) {
+                        $tr->rollback();
+                        return false;
+                    };
+                };
+
+
+            } else {
+                $tr->rollback();
+                return false;
+            };
+        } catch (CException $e) {
+            $tr->rollback();
+            return false;
+        };
+        $tr->commit();
+        return true;
+    }
 }

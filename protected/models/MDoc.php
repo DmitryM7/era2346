@@ -18,36 +18,6 @@ abstract class MDoc extends Doc implements IStatusable
         return parent::model($className);
     }
 
-   /**
-     * Method marks document and his children as deleted.
-     * @param $id PK Parent document
-     * @return int
-     */
-   protected function markDelete() {
-         $signs=MDoc::model()->findAll(array(
-                                             'condition'=>'pid=:pid',
-                                             'params'=>array(':pid'=>$this->id)
-                                             ));
-
-         $tr=$this->dbConnection->beginTransaction();
-           
-         try {
-              $this->isdelete=1;
-               if ($this->save()) {
-                   foreach ($signs as $sign) {
-                       $sign->isdelete=1;
-                       //todo Сделать откат в случае ошибки удаления хотя бы одного документа
-                       $sign->save();
-                   };
-               };
-           } catch (CException $e) {
-               $tr->rollback();
-               return FALSE;
-           }
-         $tr->commit();
-         return TRUE;
-    }
-
     /**
      * Method takes ownership.
      * @param $user
@@ -148,6 +118,8 @@ abstract class MDoc extends Doc implements IStatusable
    public function getStatus() {
         return $this->status;
     }
+
+   abstract public function markDelete();
 
    public function rules() {
         return array(array("details","required"));
