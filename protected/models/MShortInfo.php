@@ -25,7 +25,7 @@ class MShortInfo extends MDoc
 
     public function defaultScope() {
         return array(
-           'condition'=>"taxon LIKE '".self::getMainTaxon()."'"
+           'condition'=>"taxon LIKE '".self::getMainTaxon()."%'"
         );
     }
 }

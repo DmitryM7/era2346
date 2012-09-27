@@ -171,7 +171,7 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
 
     public function defaultScope() {
         return array(
-            'condition'=>"taxon LIKE '".self::getMainTaxon()."'"
+            'condition'=>"taxon LIKE '".self::getMainTaxon()."%'"
         );
     }
 
