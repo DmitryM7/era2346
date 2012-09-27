@@ -84,21 +84,8 @@ abstract class MDoc extends Doc implements IStatusable
     * @return bool
     **/
    public function isResponsible($user) {
-            //По заявке #1032
-            //Временно ввожу возможность
-            //подписи для любого пользователя.
-
-            //По заявке #1011
-            // разрешаю подпись служебным пользователям
-            // сотрудникам соответствующих подразделений
-            if ($this->author==$user->un2 || $this->inspector==$user->un2
-                || ($this->author=="BNK-CL" && $this->startsWith($this->author,"04101")) ||($this->author=="PLASTIK" && $this->startsWith($this->author,"04110"))
-               ) {
-                return true;
-            } else {
-              return false;
-            };
-        }
+           return $this->author==$user || $this->inspector==$user;
+   }
 
    protected function onBeforeStatusUpdate($oldStatus,$newStatus) {
 
