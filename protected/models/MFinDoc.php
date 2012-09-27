@@ -6,8 +6,10 @@
  * Time: 14:48
  * To change this template use File | Settings | File Templates.
  */
-class MFinDoc extends MDoc implements ISignable
+class MFinDoc extends MDoc implements ISignable,ISingleFile
 {
+    var $_currFile=null;
+
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
@@ -50,7 +52,7 @@ class MFinDoc extends MDoc implements ISignable
      * @return mixed
      */
     public function hasSign($author,$inspector) {
-        $sign=MSign::model()->byPid($this->id)->byAuthor($author);
+        $sign=MSign::model()->byPid($this->id)->byAuthor($author)->find();
         if ($sign instanceof ISign) {
             return $sign;
         } else {
@@ -104,11 +106,19 @@ class MFinDoc extends MDoc implements ISignable
 
     }
     public function getSigns() {
-        $signs=MSign::model()->byPid($this->id);
+        $signs=MSign::model()->byPid($this->id)->find();
         return $signs;
     }
-    public function getData2Sign() {
 
+    public function getData2Sign() {
+        $file=$this->getFile();
+        return $file->data;
+    }
+    public function getFile() {
+        if (is_null($this->_currFile)) {
+            $this->_currFile=MFdata::model()->byPid($this->id)->find();
+        };
+        return $this->_currFile;
     }
     public function hasErrorSign() {
 
