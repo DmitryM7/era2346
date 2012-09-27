@@ -85,41 +85,19 @@ class MFinDoc extends MDoc implements ISignable
     }
 
     public function addSign($author,$inspector,$details) {
-        /**
-         * Если документ, уже подписан,
-         * то ничего не делаем.
-         */
+        /** If document has sign then exit. */
         if ($this->hasSign($author,$inspector)!==FALSE) {
             return false;
         };
 
-        $tr=$this->dbConnection->beginTransaction();
+
         $this->nextStatus(__METHOD__);
 
-        try {
-            $doc=new MFinDoc();
-            $doc->taxon=MDoc::signTaxon;
-            $doc->author=$author;
-            $doc->inspector=$inspector;
-            $doc->details=$details;
-            $doc->opdate=$this->opdate;
-            $doc->pid=$this->id;
+        $sign=new MSign();
+        return $sign->setAuthor($author)
+                    ->setDetaisl($details)
+                    ->save();
 
-            $res1 = $doc->save();
-            $res2 = $this->save();
-        }
-        catch (CException $e) {
-            $tr->rollback();
-        }
-
-        if ($res1 && $res2) {
-            $tr->commit();
-            return true;
-        }
-        else {
-            $tr->rollback();
-            return false;
-        }
     }
     public function getSigns() {
         $signs=MDoc::model()->findAll(
