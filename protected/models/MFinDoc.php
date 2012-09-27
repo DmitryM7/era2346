@@ -106,7 +106,7 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
 
     }
     public function getSigns() {
-        $signs=MSign::model()->byPid($this->id)->find();
+        $signs=MSign::model()->byPid($this->id)->findAll();
         return $signs;
     }
 
