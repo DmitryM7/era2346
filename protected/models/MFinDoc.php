@@ -24,8 +24,9 @@ class MFinDoc extends MDoc implements ISignable
      * @return mixed
      */
     public function getChildren() {
-        $docs=self::model()->findAll(array('condition'=>'pid=:pid',
-                'params'=>array(':pid'=>$this->id))
+        $docs=self::model()->findAll(array(
+                'condition'=>'pid=:pid AND taxon<>:signTaxon',
+                'params'=>array(':pid'=>$this->id,':signTaxon'=>MDoc::signTaxon))
         );
         return $docs;
     }
@@ -37,7 +38,7 @@ class MFinDoc extends MDoc implements ISignable
      * @return mixed
      */
     public function delOnlyIfChild($id) {
-        $doc=MDoc::model()->isChild()->findByPk($id);
+        $doc=self::model()->isChild()->findByPk($id);
         return $doc->delete();
     }
 
@@ -49,12 +50,12 @@ class MFinDoc extends MDoc implements ISignable
      * @return mixed
      */
     public function hasSign($author,$inspector) {
-        $sign=MDoc::model()->find(array(
-                'condition'=>'pid=:doc AND author=:author AND inspector=:inspector AND isdelete=0',
-                'params'=>array(':doc'=>$this->primaryKey,':author'=>$author,':inspector'=>$inspector)
-            )
-        );
-        return is_null($sign) ? FALSE : $sign;
+        $sign=MSign::model()->byPid($this->id)->byAuthor($author);
+        if ($sign instanceof ISign) {
+            return $sign;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -68,20 +69,23 @@ class MFinDoc extends MDoc implements ISignable
     }
 
     /**
+     * Method finds sign doc. If method can't find sign, then add sign.
      * @param MUser $whoAmI
      * @param Mixed $author
      * @param Binary $sign
      * @return bool
      */
-    public function checkAndSign($whoAmI,$author,$sign) {
-        if ($this->hasSign($author,$author)!==FALSE) {
+    public function checkAndSign($whoAmI,$inspector,$sign) {
+
+        if ($this->hasSign($whoAmI,$inspector)!==FALSE) {
             return false;
         };
+
         if (!$this->isResponsible($whoAmI)) {
             return false;
         };
 
-        return $this->addSign($whoAmI,$author,$sign);
+        return $this->addSign($whoAmI,$inspector,$sign);
     }
 
     public function addSign($author,$inspector,$details) {
@@ -100,11 +104,7 @@ class MFinDoc extends MDoc implements ISignable
 
     }
     public function getSigns() {
-        $signs=MDoc::model()->findAll(
-            array(
-                'condtion'=>'pid=:pid AND isdelete=0',
-                array(':pid'=>$this->id)
-            ));
+        $signs=MSign::model()->byPid($this->id);
         return $signs;
     }
     public function getData2Sign() {

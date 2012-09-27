@@ -66,4 +66,19 @@ class MSign extends MDoc implements ISign
         $tr->commit();
         return false;
     }
+
+    public function byPid($pid) {
+        $this->getDbCriteria()->mergeWith(array(
+            'condition'=>'pid=:pid',
+            'params'=>array(':pid'=>$pid)
+        ));
+        return $this;
+    }
+    public function byAuthor($author) {
+        $this->getDbCriteria()->mergeWith(array(
+            'condition'=>'author=:author',
+            'params'=>array(':author'=>$author)
+        ));
+        return $this;
+    }
 }
