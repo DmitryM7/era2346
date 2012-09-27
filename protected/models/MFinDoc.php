@@ -14,6 +14,10 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
     {
         return parent::model($className);
     }
+
+    public static function getMainTaxon() {
+        return "fin";
+    }
     public function isChild($pid=null) {
         $this->getDbCriteria()->mergeWith(array(
             'condition'=>'pid IS NOT NULL'
@@ -164,4 +168,11 @@ class MFinDoc extends MDoc implements ISignable,ISingleFile
         $tr->commit();
         return true;
     }
+
+    public function defaultScope() {
+        return array(
+            'condition'=>"taxon LIKE '".self::getMainTaxon()."'"
+        );
+    }
+
 }

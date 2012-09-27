@@ -15,6 +15,9 @@ class MSign extends MDoc implements ISign
         return parent::model($className);
     }
 
+    public static function getMainTaxon() {
+        return 'sign';
+    }
     /**
      * Method finds file with sign.
      * @return null
@@ -85,5 +88,11 @@ class MSign extends MDoc implements ISign
     public function markDelete() {
         $this->isdelete=1;
         return $this->save();
+    }
+
+    public function defaultScope() {
+        return array(
+            'condition'=>"taxon='".self::getMainTaxon()."'"
+        );
     }
 }

@@ -120,6 +120,8 @@ abstract class MDoc extends Doc implements IStatusable
     }
 
    abstract public function markDelete();
+   abstract public function defaultScope();
+   abstract public static function getMainTaxon();
 
    public function rules() {
         return array(array("details","required"));
