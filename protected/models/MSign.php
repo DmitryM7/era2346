@@ -6,7 +6,7 @@
  * Time: 13:21
  * To change this template use File | Settings | File Templates.
  */
-class MSign extends MDoc implements ISign
+class MSign extends MDoc implements ISign, ISingleFile
 {
     private $_currSignFile=null;
 
@@ -24,14 +24,11 @@ class MSign extends MDoc implements ISign
      */
     protected function findSignFile() {
         if (is_null($this->_currSignFile)) {
-            $this->_currSignFile=MFdata::model()->findByPid($this->id);
+            $this->_currSignFile=MFdata::model()->byPid($this->id)->find();
         };
         return $this->_currSignFile;
     }
-    protected function getSignFile() {
-        $this->findSignFile();
-        return $this->_currSignFile;
-    }
+
     public function setDetails($details) {
         if (is_null($this->getSignFile())) {
             $fdata=MFdata();
@@ -46,8 +43,12 @@ class MSign extends MDoc implements ISign
         return $this;
     }
     public function getDetails() {
-         $file=$this->findSignFile();
+        $file=$this->getFile();
         return $file->data;
+    }
+    public function getFile() {
+        $this->findSignFile();
+        return $this->_currSignFile;
     }
 
     public function getSize() {
@@ -70,13 +71,6 @@ class MSign extends MDoc implements ISign
         return false;
     }
 
-    public function byPid($pid) {
-        $this->getDbCriteria()->mergeWith(array(
-            'condition'=>'pid=:pid',
-            'params'=>array(':pid'=>$pid)
-        ));
-        return $this;
-    }
     public function byAuthor($author) {
         $this->getDbCriteria()->mergeWith(array(
             'condition'=>'author=:author',

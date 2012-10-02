@@ -84,8 +84,21 @@ abstract class MDoc extends Doc implements IStatusable
     * @return bool
     **/
    public function isResponsible($user) {
-           return $this->author==$user || $this->inspector==$user;
-   }
+            //По заявке #1032
+            //Временно ввожу возможность
+            //подписи для любого пользователя.
+
+            //По заявке #1011
+            // разрешаю подпись служебным пользователям
+            // сотрудникам соответствующих подразделений
+            if ($this->author==$user->un2 || $this->inspector==$user->un2
+                || ($this->author=="BNK-CL" && $this->startsWith($this->author,"04101")) ||($this->author=="PLASTIK" && $this->startsWith($this->author,"04110"))
+               ) {
+                return true;
+            } else {
+              return false;
+            };
+        }
 
    protected function onBeforeStatusUpdate($oldStatus,$newStatus) {
 
@@ -107,13 +120,14 @@ abstract class MDoc extends Doc implements IStatusable
     }
 
    abstract public function markDelete();
-   abstract public function defaultScope();
    abstract public static function getMainTaxon();
-
-   public function setTaxon($taxon) {
-       parent::setTaxon(self::getMainTaxon()." ".$taxon);
-   }
-
+    public function byPid($pid) {
+        $this->getDbCriteria()->mergeWith(array(
+            'condition'=>'pid=:pid',
+            'params'=>array(':pid'=>$pid)
+        ));
+        return $this;
+    }
    public function rules() {
         return array(array("details","required"));
     }

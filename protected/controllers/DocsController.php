@@ -54,13 +54,12 @@ class DocsController extends Controller
 
 
     public function addNote($pid,$classCode) {
-        $pdoc=MDoc::model()->findByPk($pid);
+        $pdoc=MFinDoc::model()->findByPk($pid);
 
-        $newdoc=new MDoc();
+        $newdoc=new MShortInfo();
         $newdoc->opdate=$pdoc->opdate;
-        $newdoc->class=$classCode;
+        $newdoc->taxon=$classCode;
         $newdoc->author=$this->currentUser;
-        $newdoc->inspector=$this->currentUser;
         $newdoc->pid=$pdoc->id;
         $newdoc->title=$_GET['title'];
         $newdoc->details=$_GET['details'];
@@ -115,12 +114,14 @@ class DocsController extends Controller
     }
 
     public function actionTakeAuthor($id) {
-        $doc=MDoc::model()->findByPk($id);
-        $doc->takeAuthor($this->user)->save();
+        $doc=MFinDoc::model()->findByPk($id);
+        $doc->takeAuthor($this->user)
+            ->save();
     }
     public function actionTakeInspector($id) {
-        $doc=MDoc::model()->findByPk($id);
-        $doc->takeInspector($this->user)->save();
+        $doc=MFinDoc::model()->findByPk($id);
+        $doc->takeInspector($this->user)
+            ->save();
     }
 
     public function actionShow() {
@@ -150,6 +151,17 @@ class DocsController extends Controller
                 header('Content-Type:application/pdf');
                 echo base64_decode($doc->details);
             };
+    }
+
+    /**************************
+            НОВЫЕ МЕТОДЫ
+     *************************/
+
+    /**
+     * Returns list of documents by filter.
+     */
+    public function actionByFilter() {
+
     }
 	// Uncomment the following methods and override them if needed
 	/*
