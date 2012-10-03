@@ -18,14 +18,23 @@ class MSign extends MDoc implements ISign, ISingleFile
     public static function getMainTaxon() {
         return 'sign';
     }
+
     /**
      * Method finds file with sign.
      * @return null
      */
     protected function findSignFile() {
-        if (is_null($this->_currSignFile)) {
-            $this->_currSignFile=MFdata::model()->byPid($this->id)->find();
+        if (is_null($this->getSignFile())) {
+            $this->setSignFile(MFdata::model()->byPid($this->id)->find());
         };
+        return $this->getSignFile();
+    }
+
+    private function setSignFile($file) {
+        $this->_currSignFile=$file;
+        return $this;
+    }
+    protected function getSignFile() {
         return $this->_currSignFile;
     }
 
@@ -48,11 +57,11 @@ class MSign extends MDoc implements ISign, ISingleFile
     }
     public function getFile() {
         $this->findSignFile();
-        return $this->_currSignFile;
+        return $this->getSignFile();
     }
 
     public function getSize() {
-        return $this->_currSignFile->fsize;
+        return $this->getSignFile()->fsize;
     }
     public function save() {
         $tr=$this->dbConnection->beginTransaction();
@@ -88,5 +97,19 @@ class MSign extends MDoc implements ISign, ISingleFile
         return array(
             'condition'=>"taxon='".self::getMainTaxon()."'"
         );
+    }
+
+    /**
+     * User shouldn't see real structure
+     * of model.
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name) {
+        if ($name=="details") {
+            return $this->getDetails();
+        } else {
+            return parent::__get($name);
+        };
     }
 }
