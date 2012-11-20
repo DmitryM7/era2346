@@ -2,6 +2,10 @@
 
 class MOpdate extends Opdate
 {
+    CONST dayIsClose=0;
+    CONST dayIsOpen=1;
+    CONST dayIsNotOpen=3;
+
     public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
@@ -23,24 +27,79 @@ class MOpdate extends Opdate
        };
            return parent::beforeValidate();
    }
-   
-   public static function isClose($od)
+
+    /**
+     * If operation day is close then method returns false,
+     * else method returns true.
+     * @param $od Operation day
+     * @return int
+     */
+    public static function isClose($od)
     {
-        $opdate=MOpdate::model()->find(array('condition'=>'opdate=:opdate AND isclose=0',
-                                             'params'=>array(':opdate'=>$od)
-                                           )
-                                     );
-        
-        if (!is_null($opdate))
-        {            
-            return 0;
-        }
-        else
-        {
-           return 1;    
-        }
-        
+        return STATIC::getStatus($od)==STATIC::dayIsClose ? TRUE : FALSE;
     }
+
+    /**
+     * If operation day is open then method returns true, else
+     * method returns false.
+     * @param $od
+     * @return int
+     */
+    public static function isOpen($od) {
+        return STATIC::getStatus($od)==STATIC::dayIsOpen ? TRUE : FALSE;
+    }
+
+    /**
+     * If operation day record doesn't exists in database returns true,
+     * else returns false.
+     * @param $od
+     * @return bool
+     */
+    public static function isNotOpen($od) {
+        return STATIC::getStatus($od)==STATIC::dayIsNotOpen ? TRUE : FALSE;
+    }
+
+    public static function dayPermitSaveDocuments($od) {
+            $dayStatus=STATIC::getStatus($od);
+
+        if (SysClass::getSetting('docValidateRules','checkIfOpDateExists',TRUE) && $dayStatus==STATIC::dayIsNotOpen) {
+            return false;
+        };
+
+        if (SysClass::getSetting('docValidateRules','checkIfOpDateOpen',TRUE) && $dayStatus!=STATIC::dayIsOpen) {
+            return false;
+        };
+
+        if (SysClass::getSetting('docValidateRules','checkIfOpDateClose',TRUE) && $dayStatus==STATIC::dayIsClose) {
+            return false;
+        };
+
+        return true;
+
+    }
+    public static function getStatus($od) {
+
+        $opdate=MOpdate::model()->findByAttributes(array(
+                'opdate'=>$od
+            )
+        );
+
+        if ($opdate instanceof IOpDate) {
+
+            switch ($opdate->isclose) {
+                case "0":
+                    return STATIC::dayIsOpen;
+                    break;
+                case "1":
+                    return STATIC::dayIsClose;
+                    break;
+            };
+
+        };
+
+        return STATIC::dayIsNotOpen;
+    }
+
 
     /**
      * Закрывает операционный день

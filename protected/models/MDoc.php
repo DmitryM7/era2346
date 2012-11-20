@@ -35,7 +35,9 @@ abstract class MDoc extends Doc implements IStatusable
     }
 
    protected function beforeValidate() {
-            if ($this->isNewRecord) 
+
+
+            if ($this->isNewRecord)
             {
                 $this->dt=new CDbExpression('NOW()');
             };
@@ -46,7 +48,16 @@ abstract class MDoc extends Doc implements IStatusable
                 $this->status=$begStatus->primaryKey;
             };
 
-            return parent::beforeValidate();
+       /*
+        * Checks if opdate is exists and doesn't close.
+        */
+        if (!MOpdate::dayPermitSaveDocuments($this->opdate)) {
+            return false;
+        }
+
+       return parent::beforeValidate();
+
+
       }
 
    /**

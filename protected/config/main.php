@@ -5,7 +5,8 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
-$jsconf=require_once(dirname(__FILE__)."/jsconf.php");
+$jsconf = require_once(dirname(__FILE__)."/jsconf.php");
+$uconf  = require_once(dirname(__FILE__)."/uconf.php");
 
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
@@ -98,15 +99,5 @@ return array(
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
-	'params'=>array(
-		// this is used in contact page
-		'adminEmail'=>'admin@era2346.ru',
-        // Контролер отправки форм
-        'finspector'=>'ADMNRE',
-        //Тип идентификации
-        // Возможные варианты {ad,simple}
-        'auth'=>array(
-            'type'=>'simple'
-        )
-	),    
+	'params'=>$uconf,
 );
