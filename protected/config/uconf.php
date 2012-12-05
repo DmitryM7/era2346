@@ -20,5 +20,6 @@ return array(
         'checkIfOpDateExists'=> true,
         'checkIfOpDateOpen'  => true,
         'checkIfOpDateClose' => true,
-    )
+    ),
+    'adminList'=>array('dmaslov','ddorkin')
 );

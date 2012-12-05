@@ -28,7 +28,7 @@
  * @property Status $status0
  * @property Fdata[] $fdatas
  */
-class Doc extends CActiveRecord
+class Doc extends MAr
 {
 	/**
 	 * Returns the static model of the specified AR class.
