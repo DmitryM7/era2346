@@ -52,7 +52,7 @@ abstract class MDoc extends Doc implements IStatusable
         * Checks if opdate is exists and doesn't close.
         */
         if (!MOpdate::dayPermitSaveDocuments($this->opdate)) {
-            return false;
+            return FALSE;
         }
 
        return parent::beforeValidate();
@@ -98,11 +98,25 @@ abstract class MDoc extends Doc implements IStatusable
            return $this->author==$user || $this->inspector==$user;
         }
 
-   protected function onBeforeStatusUpdate($oldStatus,$newStatus) {
-
+    /**
+     * This method is invoke before status update.
+     * The default implementation raises the onBeforeStatusUpdate event.
+     * @param $oldStatus
+     * @param $newStatus
+     * @return bool
+     */
+    protected function beforeStatusUpdate($oldStatus,$newStatus) {
+        $this->raiseEvent('onBeforeStatusUpdate',new CEvent($this));
+        return TRUE;
     }
-   protected function onAfterStatusUpdate($newStatus) {
 
+    /**
+     * This method is invoke after status update.
+     * The default implementation raises the onAfterStatusUpdate event.
+     * @param $oldStatus
+     */
+    protected function afterStatusUpdate($oldStatus) {
+       $this->raiseEvent('onAfterStatusUpdate',new CEvent($this));
     }
 
    public function setStatus($status) {

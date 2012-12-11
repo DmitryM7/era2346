@@ -8,6 +8,13 @@
  */
 interface IXattrable
 {
-    public function getXAttr($key,$defaultValue);
+    public function getXAttrList();
+    public function isXAttrDef($key);
+    public function getTableName();
+    public function getXAttr($key,$date=null);
+    public function getXAttrWDef($key,$defValue,$date=null);
+    public function fillAvailableXAttrs();
+    public function getAvailableXAttrs();
     public function setXAttr($key,$value);
+    public function delXAttr($key);
 }
